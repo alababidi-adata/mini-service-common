@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <Version>0.0.3</Version>
+    <IsPackable>true</IsPackable>
+    <Authors>Vitalii Honcharuk</Authors>
+    <Company>Vitalii Honcharuk</Company>
+    <RepositoryUrl>https://github.com/</RepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+</Project>
