@@ -2,12 +2,14 @@
 using System.Reflection;
 using Common.Application.Abstractions;
 using Common.Service.MassTransit;
+using Common.Service.Options;
 using DotNet.Globbing;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using RabbitMQ.Client;
 
 namespace Common.Service
 {
@@ -55,7 +57,11 @@ namespace Common.Service
                 .SetSampler(new AlwaysOnSampler())
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
                 .SetErrorStatusOnException()
-                .AddAspNetCoreInstrumentation(c => c.RecordException = true)
+                .AddAspNetCoreInstrumentation(c =>
+                {
+                    c.RecordException = true;
+                    c.EnableGrpcAspNetCoreSupport = true;
+                })
                 .AddHttpClientInstrumentation(c =>
                 {
                     c.SetHttpFlavor = true;
@@ -71,18 +77,32 @@ namespace Common.Service
                     opt.SetDbStatementForStoredProcedure = true;
                     opt.SetDbStatementForText = true;
                 })
-                .AddJaegerExporter()
+                .AddJaegerExporter(opts =>
+                {
+                    // TODO: add Jaeger exporter config section
+                    //opts.AgentHost = Configuration["Jaeger:AgentHost"];
+                    //opts.AgentPort = Convert.ToInt32(Configuration["Jaeger:AgentPort"]);
+                })
                 );
 
         /// <summary>
         /// Adds MassTransit services.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration">Configuration holding a 'RabbitMQ:Host/Port/Username/Password' value.</param>
+        /// <param name="configuration">Configuration holding a <see cref="MassTransitOptions"/></param>
+        /// <param name="sectionSelector">Path and name of the <see cref="MassTransitOptions"/> section</param>
         /// <param name="assemblies">Assemblies to search in for consumers.</param>
         /// <returns></returns>
-        public static IServiceCollection AddMassTransitServices(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
+        public static IServiceCollection AddMassTransitServices(this IServiceCollection services, IConfiguration configuration,
+            string sectionSelector = MassTransitOptions.SectionName, params Assembly[] assemblies)
         {
+            var options = configuration
+                              .GetSection(sectionSelector)
+                              .Get<MassTransitOptions>()
+                          ?? throw new Exception($"'{sectionSelector}' section must be declared!");
+
+            if (!options.Enable) return services;
+
             // Register MassTransit consumers
             services.Scan(scan => scan
                 .FromAssemblies(assemblies)
@@ -90,26 +110,35 @@ namespace Common.Service
                 .AsSelf()
                 .WithScopedLifetime());
 
+            var rmqOptions = options.RabbitMq ?? throw new Exception($"'{sectionSelector}:{nameof(options.RabbitMq)}' section must be declared!");
+
+            var host = $"{rmqOptions.Host}:{rmqOptions.Port}";
+
             services
                 .AddMassTransitHostedService()
                 .AddMassTransit(o =>
                 {
                     o.AddConsumers(assemblies);
-
                     o.UsingRabbitMq((context, cfg) =>
                     {
-                        var host = $"{configuration["RabbitMQ:Host"]}:{configuration["RabbitMQ:Port"]}";
                         cfg.Host(new Uri($"rabbitmq://{host}"), rabbit =>
                         {
                             rabbit.PublisherConfirmation = true;
-                            rabbit.Username(configuration["RabbitMQ:Username"]);
-                            rabbit.Password(configuration["RabbitMQ:Password"]);
+                            rabbit.Username(rmqOptions.Username);
+                            rabbit.Password(rmqOptions.Password);
                         });
 
-                        cfg.UseConsumeFilter(typeof(SentryConsumeFilter<>), context);
+                        cfg.UseConsumeFilter(typeof(ExtendedConsumeFilter<>), context);
                         cfg.ConfigureEndpoints(context);
                     });
                 });
+
+            if (!rmqOptions.HealthChecks.Enable) return services;
+
+            services.AddHealthChecks()
+                .AddRabbitMQ($"amqp://{rmqOptions.Username}:{rmqOptions.Password}@{host}",
+                new SslOption(),
+                tags: rmqOptions.HealthChecks.Tags);
 
             return services;
         }

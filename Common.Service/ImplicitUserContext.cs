@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Common.Application.Abstractions;
-using Sentry;
+using IdentityModel;
 
 namespace Common.Service
 {
@@ -11,21 +11,9 @@ namespace Common.Service
     {
         private static readonly AsyncLocal<IDictionary<string, string[]>> _claimsStore = new();
 
-        public string GetUserId() => GetUserIdOrDefault()
-                                     ?? throw new InvalidOperationException($"No user id has been set.");
+        public string GetUserId() => GetUserIdOrDefault() ?? throw new InvalidOperationException("No user id has been set.");
 
-        public string? GetUserIdOrDefault()
-        {
-            string? userId = null;
-
-            SentrySdk.ConfigureScope(o =>
-            {
-                if (string.IsNullOrEmpty(o.User.Id)) return;
-                userId = o.User.Id;
-            });
-
-            return userId;
-        }
+        public string? GetUserIdOrDefault() => GetClaims(JwtClaimTypes.Subject).SingleOrDefault();
 
         public IEnumerable<string> GetClaims(string claimType)
         {
@@ -35,11 +23,6 @@ namespace Common.Service
                 return Array.Empty<string>();
 
             return claims;
-
-            // Defensive copy in case
-            var copy = new string[claims.Length];
-            claims.CopyTo(copy.AsSpan());
-            return copy;
         }
 
         public void SetClaims(IEnumerable<KeyValuePair<string, string>> values)
