@@ -144,12 +144,13 @@ namespace Common.Service
         /// Get options from configuration or section by type
         /// With cropping "Options" ending
         /// </summary>
-        public static TOptions GetOptions<TOptions>(this IConfiguration section, string configPath = "")
+        public static TOptions GetOptions<TOptions>(this IConfiguration section, string? configPath = null)
+            where TOptions : class, new()
         {
             var name = typeof(TOptions).Name;
             const string Ending = "Options";
             var sectionName = name.EndsWith(Ending) ? name[..^Ending.Length] : name;
-            var path = configPath == "" ? "" : $"{configPath}:";
+            var path = string.IsNullOrWhiteSpace(configPath) ? "" : $"{configPath}:";
             return section.GetSection($"{path}{sectionName}").Get<TOptions>();
         }
     }
