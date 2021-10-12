@@ -5,6 +5,7 @@ using Common.Service.MassTransit;
 using Common.Service.Options;
 using DotNet.Globbing;
 using MassTransit;
+using MassTransit.Definition;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
@@ -96,9 +97,7 @@ namespace Common.Service
         public static IServiceCollection AddMassTransitServices(this IServiceCollection services, IConfiguration configuration,
             string sectionSelector = MassTransitOptions.SectionName, params Assembly[] assemblies)
         {
-            var options = configuration
-                              .GetSection(sectionSelector)
-                              .Get<MassTransitOptions>()
+            var options = configuration.GetSection(sectionSelector).Get<MassTransitOptions>()
                           ?? throw new Exception($"'{sectionSelector}' section must be declared!");
 
             if (!options.Enable) return services;
@@ -118,6 +117,7 @@ namespace Common.Service
                 .AddMassTransitHostedService()
                 .AddMassTransit(o =>
                 {
+                    o.SetEndpointNameFormatter(new DefaultEndpointNameFormatter(true));
                     o.AddConsumers(assemblies);
                     o.UsingRabbitMq((context, cfg) =>
                     {
