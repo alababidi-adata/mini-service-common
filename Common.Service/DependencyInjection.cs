@@ -90,15 +90,12 @@ namespace Common.Service
         /// Adds MassTransit services.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration">Configuration holding a <see cref="MassTransitOptions"/></param>
-        /// <param name="sectionSelector">Path and name of the <see cref="MassTransitOptions"/> section</param>
-        /// <param name="assemblies">Assemblies to search in for consumers.</param>
+        /// <param name="options">configuration options</param>
+        /// <param name="assemblies">Assemblies to search in for consumers</param>
         /// <returns></returns>
-        public static IServiceCollection AddMassTransitServices(this IServiceCollection services, IConfiguration configuration,
-            string sectionSelector = MassTransitOptions.SectionName, params Assembly[] assemblies)
+        public static IServiceCollection AddMassTransitServices(this IServiceCollection services, MassTransitOptions options, params Assembly[] assemblies)
         {
-            var options = configuration.GetSection(sectionSelector).Get<MassTransitOptions>()
-                          ?? throw new Exception($"'{sectionSelector}' section must be declared!");
+            if (options == null) throw new Exception($"'{nameof(MassTransitOptions)}' must not be null!");
 
             if (!options.Enable) return services;
 
@@ -109,7 +106,7 @@ namespace Common.Service
                 .AsSelf()
                 .WithScopedLifetime());
 
-            var rmqOptions = options.RabbitMq ?? throw new Exception($"'{sectionSelector}:{nameof(options.RabbitMq)}' section must be declared!");
+            var rmqOptions = options.RabbitMq ?? throw new Exception($"{nameof(options.RabbitMq)}' must not be null!");
 
             var host = $"{rmqOptions.Host}:{rmqOptions.Port}";
 
@@ -117,7 +114,7 @@ namespace Common.Service
                 .AddMassTransitHostedService()
                 .AddMassTransit(o =>
                 {
-                    o.SetEndpointNameFormatter(new DefaultEndpointNameFormatter(true));
+                    o.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter(true));
                     o.AddConsumers(assemblies);
                     o.UsingRabbitMq((context, cfg) =>
                     {
@@ -141,6 +138,19 @@ namespace Common.Service
                 tags: rmqOptions.HealthChecks.Tags);
 
             return services;
+        }
+
+        /// <summary>
+        /// Get options from configuration or section by type
+        /// With cropping "Options" ending
+        /// </summary>
+        public static TOptions GetOptions<TOptions>(this IConfiguration section, string configPath = "")
+        {
+            var name = typeof(TOptions).Name;
+            const string Ending = "Options";
+            var sectionName = name.EndsWith(Ending) ? name[..^Ending.Length] : name;
+            var path = configPath == "" ? "" : $"{configPath}:";
+            return section.GetSection($"{path}{sectionName}").Get<TOptions>();
         }
     }
 }
