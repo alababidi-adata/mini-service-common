@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Common.Application.Abstractions;
+using Common.Service.Controllers;
 using Common.Service.MassTransit;
 using Common.Service.Options;
 using DotNet.Globbing;
 using MassTransit;
 using MassTransit.Definition;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using RabbitMQ.Client;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Common.Service
 {
@@ -90,12 +95,11 @@ namespace Common.Service
         /// Adds MassTransit services.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="options">configuration options</param>
+        /// <param name="configuration">Containing <see cref="MassTransitOptions"/></param>
         /// <param name="assemblies">Assemblies to search in for consumers</param>
-        /// <returns></returns>
-        public static IServiceCollection AddMassTransitServices(this IServiceCollection services, MassTransitOptions options, params Assembly[] assemblies)
+        public static IServiceCollection AddMassTransitServices(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
         {
-            if (options == null) throw new Exception($"'{nameof(MassTransitOptions)}' must not be null!");
+            var options = configuration.GetSection(MassTransitOptions.SectionName).Get<MassTransitOptions>();
 
             if (!options.Enable) return services;
 
@@ -130,12 +134,29 @@ namespace Common.Service
                     });
                 });
 
-            if (!rmqOptions.HealthChecks.Enable) return services;
+            return services;
+        }
 
-            services.AddHealthChecks()
-                .AddRabbitMQ($"amqp://{rmqOptions.Username}:{rmqOptions.Password}@{host}",
-                new SslOption(),
-                tags: rmqOptions.HealthChecks.Tags);
+        /// <summary>
+        /// Adds controllers as services and OpenApi generation
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configureSwaggerGen"></param>
+        /// <param name="configureMvc"></param>
+        public static IServiceCollection AddWebApi(this IServiceCollection services, Action<SwaggerGenOptions>? configureSwaggerGen = null, Action<IMvcBuilder>? configureMvc = null)
+        {
+            services.TryAddScoped<UserContextMiddleware>();
+
+            var mvcBuilder = services
+                .AddControllers(o => o.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer())))
+                .AddControllersAsServices();
+            configureMvc?.Invoke(mvcBuilder);
+
+            services.AddSwaggerGen(o =>
+            {
+                o.DescribeAllParametersInCamelCase();
+                configureSwaggerGen?.Invoke(o);
+            });
 
             return services;
         }
@@ -147,11 +168,16 @@ namespace Common.Service
         public static TOptions GetOptions<TOptions>(this IConfiguration section, string? configPath = null)
             where TOptions : class, new()
         {
-            var name = typeof(TOptions).Name;
             const string Ending = "Options";
+            var name = typeof(TOptions).Name;
             var sectionName = name.EndsWith(Ending) ? name[..^Ending.Length] : name;
-            var path = string.IsNullOrWhiteSpace(configPath) ? "" : $"{configPath}:";
-            return section.GetSection($"{path}{sectionName}").Get<TOptions>();
+            var fullPath = string.IsNullOrWhiteSpace(configPath) ? sectionName : $"{configPath}:{sectionName}";
+            return section.GetSection(fullPath).Get<TOptions>();
         }
+    }
+
+    public class KebabCaseParameterTransformer : IOutboundParameterTransformer
+    {
+        public string? TransformOutbound(object? value) => value == null ? null : Regex.Replace(value.ToString()!, "([a-z])([A-Z])", "$1-$2").ToLower();
     }
 }

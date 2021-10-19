@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Common.Service.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public abstract class ApiController : ControllerBase
     {
         private ISender? _mediator;

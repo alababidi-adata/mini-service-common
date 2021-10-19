@@ -7,7 +7,5 @@ namespace Common.Service.Options
         public string Port { get; init; }
         public string Username { get; init; }
         public string Password { get; init; }
-
-        public HealthChecksOptions HealthChecks { get; init; } = new();
     }
 }

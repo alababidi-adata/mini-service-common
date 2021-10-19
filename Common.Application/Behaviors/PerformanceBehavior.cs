@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Application.Abstractions;
@@ -9,13 +10,22 @@ using NodaTime;
 
 namespace Common.Application.Behaviors
 {
-    public class PerformanceBehavior<TRequest, TResponse> : PerformanceBehavior, IPipelineBehavior<TRequest, TResponse>
+    public class PerformanceOptions
+    {
+        public const string SectionName = "Performance";
+        public TimeSpan WarningThreshold { get; set; } = TimeSpan.FromMinutes(1);
+    }
+
+    public class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : notnull
     {
         private readonly IClock _clock;
         private readonly IUserContext _userContext;
         private readonly IOptions<PerformanceOptions> _options;
         private readonly ILogger<TRequest> _logger;
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly ActivitySource _activitySource = new("Application.Performance");
+
 
         public PerformanceBehavior(IClock clock, IUserContext userContext, IOptions<PerformanceOptions> options, ILogger<TRequest> logger)
         {
@@ -28,7 +38,7 @@ namespace Common.Application.Behaviors
         public async Task<TResponse> Handle(TRequest request, CancellationToken ct, RequestHandlerDelegate<TResponse> next)
         {
             var requestName = typeof(TRequest).Name;
-            using var activity = ActivitySource.StartActivity(requestName);
+            using var activity = _activitySource.StartActivity(requestName);
 
             var response = await next();
 
@@ -44,11 +54,5 @@ namespace Common.Application.Behaviors
 
             return response;
         }
-    }
-
-    // Needed so every PerformanceBehavior<,> shares the same activity source.
-    public class PerformanceBehavior
-    {
-        protected static ActivitySource ActivitySource { get; } = new("Application.Performance");
     }
 }

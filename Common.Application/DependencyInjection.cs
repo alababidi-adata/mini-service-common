@@ -4,6 +4,8 @@ using MassTransit;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
+using Microsoft.Extensions.Configuration;
+
 
 namespace Common.Application
 {
@@ -22,22 +24,20 @@ namespace Common.Application
 
         /// <summary>
         /// Adds MediatR pipeline and handlers.
-        /// <para />
-        /// Configure Performance:
-        /// <para>
-        /// services.Configure{<see cref="PerformanceOptions"/>}(o => o.WarningThreshold
-        ///     = TimeSpan.FromMilliseconds(configuration.GetValue{<see cref="int"/>}("Application:Performance:WarningThresholdMillis")));
-        /// </para>
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="configuration">Containing <see cref="PerformanceOptions"/> and <see cref="UnhandledExceptionOptions"/></param>
         /// <param name="assemblies"></param>
         /// <returns></returns>
-        public static IServiceCollection AddMediatrPipeline(this IServiceCollection services, params Assembly[] assemblies)
+        public static IServiceCollection AddMediatrPipeline(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
         {
+            services.Configure<PerformanceOptions>(configuration.GetSection(PerformanceOptions.SectionName));
+            services.Configure<UnhandledExceptionOptions>(configuration.GetSection(UnhandledExceptionOptions.SectionName));
+
             services.AddMediatR(o => o.AsScoped(), assemblies);
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehavior<,>));
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             return services;
         }
