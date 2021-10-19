@@ -13,7 +13,7 @@ namespace Common.Application.Behaviors
     public class UnhandledExceptionOptions
     {
         public const string SectionName = "UnhandledException";
-        public bool OutputExceptionDetailsToError { get; set; } = false;
+        public bool AppendExceptionDetailsToError { get; set; } = false;
     }
 
     public class UnhandledExceptionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
@@ -26,7 +26,7 @@ namespace Common.Application.Behaviors
         public UnhandledExceptionBehavior(IOptions<UnhandledExceptionOptions> options, ILogger<UnhandledExceptionBehavior<TRequest, TResponse>> logger)
         {
             _logger = logger;
-            _outputExceptionDetailsToError = options.Value.OutputExceptionDetailsToError;
+            _outputExceptionDetailsToError = options.Value.AppendExceptionDetailsToError;
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken ct, RequestHandlerDelegate<TResponse> next)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -12,6 +13,54 @@ namespace Common.Tests
 {
     public static class TestExtensions
     {
+        public static async Task<TResponse?> Get<TResponse>(this HttpClient client, string requestUri, HttpStatusCode? expectedCode = null)
+        {
+            using var response = await client.GetAsync(requestUri);
+            return await response.VerifyAndRead<TResponse>(expectedCode);
+        }
+
+        public static Task Put(this HttpClient client, string requestUri, object requestBody, HttpStatusCode? expectedCode = null)
+            => client.Put<object>(requestUri, requestBody, expectedCode);
+
+        public static async Task<TResponse?> Put<TResponse>(this HttpClient client, string requestUri, object requestBody, HttpStatusCode? expectedCode = null)
+        {
+            using var response = await client.PutAsJsonAsync(requestUri, requestBody);
+            return await response.VerifyAndRead<TResponse>(expectedCode);
+        }
+
+        public static Task Post(this HttpClient client, string requestUri, object requestBody, HttpStatusCode? expectedCode = null)
+            => client.Post<object>(requestUri, requestBody, expectedCode);
+
+        public static async Task<TResponse?> Post<TResponse>(this HttpClient client, string requestUri, object requestBody, HttpStatusCode? expectedCode = null)
+        {
+            using var response = await client.PostAsJsonAsync(requestUri, requestBody);
+            return await response.VerifyAndRead<TResponse>(expectedCode);
+        }
+
+        public static Task Patch(this HttpClient client, string requestUri, object requestBody, HttpStatusCode? expectedCode = null)
+            => client.Patch<object>(requestUri, requestBody, expectedCode);
+
+        public static async Task<TResponse?> Patch<TResponse>(this HttpClient client, string requestUri, object requestBody, HttpStatusCode? expectedCode = null)
+        {
+            using var response = await client.PatchJsonAsync(requestUri, requestBody);
+            return await response.VerifyAndRead<TResponse>(expectedCode);
+        }
+
+        public static async Task Delete(this HttpClient client, string requestUri, HttpStatusCode? expectedCode = null)
+        {
+            using var response = await client.DeleteAsync(requestUri);
+            await response.IsSucceed();
+        }
+
+        private static async Task<TResponse?> VerifyAndRead<TResponse>(this HttpResponseMessage response, HttpStatusCode? expectedCode = null)
+        {
+            if (expectedCode == null)
+                await response.IsSucceed();
+            else
+                response.StatusCode.Should().Be(expectedCode);
+            return await response.Content.ReadFromJsonAsync<TResponse>();
+        }
+
         public static async Task<HttpResponseMessage> PatchJsonAsync<T>(this HttpClient client, string requestUri, T model)
         {
             var content = new StringContent(JsonSerializer.Serialize(model), Encoding.Default, "application/json");
@@ -66,9 +115,12 @@ namespace Common.Tests
             }
         */
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        // ReSharper disable UnusedMember.Local
+        // ReSharper disable InconsistentNaming
+        // ReSharper disable ClassNeverInstantiated.Local
         private class ErrorModel
         {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
             public string localizedMessage { get; set; }
             public object internalMessage { get; set; }
             public Descriptor descriptor { get; set; }

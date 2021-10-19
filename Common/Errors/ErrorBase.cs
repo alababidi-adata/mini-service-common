@@ -23,7 +23,7 @@ namespace Common.Errors
         /// User friendly message which is appropriate to display in the UI.
         /// </summary>
         public string LocalizedMessage => Message;
-        protected internal virtual string DefaultLocalizedMessage => $"{Enum.GetName(Type).CamelToSentenceCase()} error";
+        protected internal virtual string DefaultLocalizedMessage => $"{Enum.GetName(Type)!.CamelToSentenceCase()} error";
 
         /// <summary>
         /// Developer friendly description
@@ -31,17 +31,12 @@ namespace Common.Errors
         public string InternalMessage { get; }
         protected internal virtual string DefaultInternalMessage => $"{Enum.GetName(Type)} error";
 
-        /// <summary>
-        /// The route cause of an error
-        /// </summary>
-        public List<Error> Reasons { get; } = new(0);
-
         public static implicit operator Result(ErrorBase errorBase) => Result.Fail(errorBase);
     }
 
     public abstract class ErrorBase<TEntity, TWhere> : ErrorBase
     {
-        protected internal override string DefaultLocalizedMessage => $"{Enum.GetName(Type).CamelToSentenceCase()} error for {typeof(TEntity).Name.CamelToSentenceCase(false)}";
+        protected internal override string DefaultLocalizedMessage => $"{Enum.GetName(Type)!.CamelToSentenceCase()} error for {typeof(TEntity).Name.CamelToSentenceCase(false)}";
         protected internal override string DefaultInternalMessage => $"{Enum.GetName(Type)} for {typeof(TEntity).Name} at {typeof(TWhere).Name}";
 
         protected ErrorBase(string? localizedMessage = null, string? internalMessage = null)
