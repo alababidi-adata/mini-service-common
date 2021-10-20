@@ -2,6 +2,6 @@
 {
     public class CommonMessageHeaders
     {
-        public static string UserId { get; } = "MiniService.UserId";
+        public const string UserId = "MiniService.UserId";
     }
 }

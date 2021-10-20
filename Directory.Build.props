@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <Version>0.0.1</Version>
+    <Version>0.0.18</Version>
     <IsPackable>true</IsPackable>
     <Authors>Vitalii Honcharuk</Authors>
     <Company>Vitalii Honcharuk</Company>

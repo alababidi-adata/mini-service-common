@@ -1,7 +1,8 @@
 ﻿namespace Messaging.Common.Enums
 {
-    public enum DataChangeType
+    public enum EventType
     {
+        Other,
         Created,
         Updated,
         Deleted

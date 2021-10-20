@@ -5,6 +5,7 @@ using Common.Application.Abstractions;
 using GreenPipes;
 using IdentityModel;
 using MassTransit;
+using Messaging.Common;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Service.MassTransit
@@ -36,7 +37,7 @@ namespace Common.Service.MassTransit
 
         private void LogInfo(ConsumeContext<TMessage> context)
         {
-            var userId = context.Headers.TryGetHeader("MiniService.UserId", out var idHeader) ? idHeader as string : null;
+            var userId = context.Headers.TryGetHeader(CommonMessageHeaders.UserId, out var idHeader) ? idHeader as string : null;
             _logger.LogInformation($"{{MassTransit.ConversationId}}," +
                                    $"{{MassTransit.MessageId}}," +
                                    $"{{MassTransit.RequestId}}," +
