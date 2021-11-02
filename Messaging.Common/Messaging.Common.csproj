@@ -5,9 +5,11 @@
     <Nullable>enable</Nullable>
     <WarningsAsErrors>CS8600,CS8602,CS8603,CS8618,CS8625,CS8425,CA1068,CA2016</WarningsAsErrors>
     <IsPackable>true</IsPackable>
-    <PackageId>Services.Messaging.Common</PackageId>
-    <PackageDescription>Services messaging Common</PackageDescription>
-    <Version>0.0.1</Version>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>alpha</VersionSuffix>
+    <PackageId>VH.MiniService.Messaging.Common</PackageId>
+    <RootNamespace>VH.MiniService.Messaging.Common</RootNamespace>
+    <PackageDescription>Common for messages libraries for services started from MiniService template</PackageDescription>
   </PropertyGroup>
 
 </Project>

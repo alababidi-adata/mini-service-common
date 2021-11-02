@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.Errors;
+using VH.MiniService.Common.Errors;
 using FluentResults;
 using MassTransit;
 
-namespace Common.Service.MassTransit
+namespace VH.MiniService.Common.Service.MassTransit
 {
     public static class MassTransitExtensions
     {

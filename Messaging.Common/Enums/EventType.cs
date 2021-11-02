@@ -1,4 +1,4 @@
-﻿namespace Messaging.Common.Enums
+﻿namespace VH.MiniService.Messaging.Common.Enums
 {
     public enum EventType
     {

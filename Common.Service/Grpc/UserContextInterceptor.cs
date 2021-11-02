@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.Application.Abstractions;
+using VH.MiniService.Common.Application.Abstractions;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 
-namespace Common.Service.Grpc
+namespace VH.MiniService.Common.Service.Grpc
 {
     public class UserContextInterceptor : Interceptor
     {

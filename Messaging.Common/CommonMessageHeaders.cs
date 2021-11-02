@@ -1,4 +1,4 @@
-﻿namespace Messaging.Common
+﻿namespace VH.MiniService.Messaging.Common
 {
     public class CommonMessageHeaders
     {

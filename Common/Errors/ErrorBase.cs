@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using Common.Extensions;
+using VH.MiniService.Common.Extensions;
 using FluentResults;
 
-namespace Common.Errors
+namespace VH.MiniService.Common.Errors
 {
     public abstract class ErrorBase : Error
     {

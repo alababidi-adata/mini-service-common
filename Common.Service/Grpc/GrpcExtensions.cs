@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Common.Errors;
+using VH.MiniService.Common.Errors;
 using FluentResults;
 using Grpc.Core;
 
-namespace Common.Service.Grpc
+namespace VH.MiniService.Common.Service.Grpc
 {
     public static class GrpcExtensions
     {

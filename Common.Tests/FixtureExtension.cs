@@ -5,7 +5,7 @@ using System.Reflection;
 using AutoFixture;
 using Bogus;
 
-namespace Common.Tests
+namespace VH.MiniService.Common.Tests
 {
     public static class FixtureExtension
     {

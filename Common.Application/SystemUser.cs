@@ -1,4 +1,4 @@
-﻿namespace Common.Application
+﻿namespace VH.MiniService.Common.Application
 {
     public static class SystemUser
     {

@@ -1,6 +1,6 @@
-﻿using Messaging.Common.Enums;
+﻿using VH.MiniService.Messaging.Common.Enums;
 
-namespace Messaging.Common
+namespace VH.MiniService.Messaging.Common
 {
     /// <summary>
     /// A base type for messages.

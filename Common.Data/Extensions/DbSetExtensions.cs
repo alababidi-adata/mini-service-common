@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Common.Data.Extensions
+namespace VH.MiniService.Common.Data.Extensions
 {
     public static class DbSetExtensions
     {

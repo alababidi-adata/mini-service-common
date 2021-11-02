@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Common.Service.Controllers
+namespace VH.MiniService.Common.Service.Controllers
 {
     [ApiController]
     [Route("[controller]")]

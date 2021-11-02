@@ -1,5 +1,5 @@
 ﻿#pragma warning disable 8618
-namespace Common.Service.Options
+namespace VH.MiniService.Common.Service.Options
 {
     public class MassTransitOptions
     {

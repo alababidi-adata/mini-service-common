@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Common.Service.Controllers
+namespace VH.MiniService.Common.Service.Controllers
 {
     public class RequestAbortedMiddleware : IMiddleware
     {

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.Application.Abstractions;
+using VH.MiniService.Common.Application.Abstractions;
 using Microsoft.AspNetCore.Http;
 
-namespace Common.Service.Controllers
+namespace VH.MiniService.Common.Service.Controllers
 {
     public class UserContextMiddleware : IMiddleware
     {

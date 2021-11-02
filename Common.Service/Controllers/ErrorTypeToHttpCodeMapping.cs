@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
-using Common.Errors;
+using VH.MiniService.Common.Errors;
 
-namespace Common.Service.Controllers
+namespace VH.MiniService.Common.Service.Controllers
 {
     public static class ErrorTypeToHttpCodeMapping
     {

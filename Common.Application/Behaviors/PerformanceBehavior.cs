@@ -2,13 +2,13 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Application.Abstractions;
+using VH.MiniService.Common.Application.Abstractions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NodaTime;
 
-namespace Common.Application.Behaviors
+namespace VH.MiniService.Common.Application.Behaviors
 {
     public class PerformanceOptions
     {

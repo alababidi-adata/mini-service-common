@@ -1,6 +1,6 @@
-﻿using Common.Extensions;
+﻿using VH.MiniService.Common.Extensions;
 
-namespace Common.Errors
+namespace VH.MiniService.Common.Errors
 {
     public class NotFoundError : ErrorBase
     {

@@ -2,7 +2,7 @@
 using System.Linq;
 using IdentityModel;
 
-namespace Common.Application.Abstractions
+namespace VH.MiniService.Common.Application.Abstractions
 {
     public interface IUserContext
     {

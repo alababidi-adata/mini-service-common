@@ -5,12 +5,13 @@
     <Nullable>enable</Nullable>
     <WarningsAsErrors>CS8600,CS8602,CS8603,CS8618,CS8625,CS8425,CA1068,CA2016</WarningsAsErrors>
     <IsPackable>true</IsPackable>
-    <PackageId>Services.Common</PackageId>
-    <PackageDescription>Services Common</PackageDescription>
+    <PackageId>VH.MiniService.Common</PackageId>
+    <RootNamespace>VH.MiniService.Common</RootNamespace>
+    <PackageDescription>Common for all services started from MiniService template</PackageDescription>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentResults" Version="2.5.0" />
+    <PackageReference Include="FluentResults" Version="[2.6.0,3)" />
   </ItemGroup>
 
 </Project>

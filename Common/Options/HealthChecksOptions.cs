@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VH.MiniService.Common.Service.Options
+namespace VH.MiniService.Common.Options
 {
     public class HealthChecksOptions
     {

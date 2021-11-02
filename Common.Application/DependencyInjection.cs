@@ -1,13 +1,12 @@
 ﻿using System.Reflection;
-using Common.Application.Behaviors;
+using VH.MiniService.Common.Application.Behaviors;
 using MassTransit;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
-using Microsoft.Extensions.Configuration;
 
-
-namespace Common.Application
+namespace VH.MiniService.Common.Application
 {
     /// <summary>
     /// We should only configure things here that we are sure will rarely change and will not be different per service

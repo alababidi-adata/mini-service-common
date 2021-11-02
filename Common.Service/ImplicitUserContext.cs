@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Common.Application.Abstractions;
+using VH.MiniService.Common.Application.Abstractions;
 using IdentityModel;
 
-namespace Common.Service
+namespace VH.MiniService.Common.Service
 {
     public class ImplicitUserContext : IUserContext
     {

@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Errors;
+using VH.MiniService.Common.Errors;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Common.Application.Behaviors
+namespace VH.MiniService.Common.Application.Behaviors
 {
     public class UnhandledExceptionOptions
     {

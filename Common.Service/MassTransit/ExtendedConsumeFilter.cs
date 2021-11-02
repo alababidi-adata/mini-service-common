@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Common.Application.Abstractions;
+using VH.MiniService.Common.Application.Abstractions;
+using VH.MiniService.Messaging.Common;
 using GreenPipes;
 using IdentityModel;
 using MassTransit;
-using Messaging.Common;
 using Microsoft.Extensions.Logging;
 
-namespace Common.Service.MassTransit
+namespace VH.MiniService.Common.Service.MassTransit
 {
     public class ExtendedConsumeFilter<TMessage> : IFilter<ConsumeContext<TMessage>> where TMessage : class
     {

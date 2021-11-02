@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Common.Application.Abstractions;
-using Common.Service.Controllers;
-using Common.Service.MassTransit;
-using Common.Service.Options;
+using VH.MiniService.Common.Application.Abstractions;
+using VH.MiniService.Common.Service.Controllers;
+using VH.MiniService.Common.Service.MassTransit;
+using VH.MiniService.Common.Service.Options;
 using DotNet.Globbing;
 using MassTransit;
 using MassTransit.Definition;
@@ -17,7 +17,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Common.Service
+namespace VH.MiniService.Common.Service
 {
     /// <summary>
     /// We should only configure things here that we are sure will rarely change and will not be different per service

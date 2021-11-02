@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Common.Extensions
+namespace VH.MiniService.Common.Extensions
 {
     public static class IDisposableExtensions
     {

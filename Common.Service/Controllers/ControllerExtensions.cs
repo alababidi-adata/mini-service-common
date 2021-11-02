@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Common.Errors;
+using VH.MiniService.Common.Errors;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Common.Service.Controllers
+namespace VH.MiniService.Common.Service.Controllers
 {
     public static class ControllerExtensions
     {

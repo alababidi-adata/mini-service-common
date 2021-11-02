@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 
-namespace Common.Tests
+namespace VH.MiniService.Common.Tests
 {
     public static class TestExtensions
     {

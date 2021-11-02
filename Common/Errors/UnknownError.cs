@@ -1,4 +1,4 @@
-﻿namespace Common.Errors
+﻿namespace VH.MiniService.Common.Errors
 {
     public class UnknownError : ErrorBase
     {

@@ -1,8 +1,8 @@
 ﻿using System;
-using Common.Errors;
+using VH.MiniService.Common.Errors;
 using Grpc.Core;
 
-namespace Common.Service.Grpc
+namespace VH.MiniService.Common.Service.Grpc
 {
     public static class ErrorTypeToGrpcCodeMapping
     {
