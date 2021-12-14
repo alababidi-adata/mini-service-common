@@ -20,14 +20,14 @@ namespace VH.MiniService.Common.Application.Behaviors
         where TRequest : notnull
     {
         private readonly IClock _clock;
-        private readonly IUserContext _userContext;
+        private readonly IRequestContext _userContext;
         private readonly IOptions<PerformanceOptions> _options;
         private readonly ILogger<TRequest> _logger;
         // ReSharper disable once StaticMemberInGenericType
         private static readonly ActivitySource _activitySource = new("Application.Performance");
 
 
-        public PerformanceBehavior(IClock clock, IUserContext userContext, IOptions<PerformanceOptions> options, ILogger<TRequest> logger)
+        public PerformanceBehavior(IClock clock, IRequestContext userContext, IOptions<PerformanceOptions> options, ILogger<TRequest> logger)
         {
             _clock = clock;
             _userContext = userContext;
@@ -47,10 +47,11 @@ namespace VH.MiniService.Common.Application.Behaviors
             if (activity is null || activity.Duration <= _options.Value.WarningThreshold)
                 return response;
 
-            var userId = _userContext.GetUserIdOrDefault() ?? string.Empty;
+            var userId = _userContext.UserIdOrDefault ?? string.Empty;
+            var tenantId = _userContext.TenantIdOrDefault;
 
-            _logger.LogWarning("Long Running Request [MiniService]: {Name} ({ElapsedMilliseconds} milliseconds) {UserId} {Request}",
-                requestName, activity.Duration.Milliseconds, userId, request);
+            _logger.LogWarning("Long Running Request [MiniService]: {Name} ({ElapsedMilliseconds} milliseconds) {TenantId} {UserId} {Request}",
+                requestName, activity.Duration.Milliseconds, tenantId, userId, request);
 
             return response;
         }

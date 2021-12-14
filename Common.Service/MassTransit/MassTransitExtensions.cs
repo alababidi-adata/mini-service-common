@@ -4,44 +4,91 @@ using System.Threading.Tasks;
 using VH.MiniService.Common.Errors;
 using FluentResults;
 using MassTransit;
+using MediatR;
 
 namespace VH.MiniService.Common.Service.MassTransit
 {
     public static class MassTransitExtensions
     {
-        public static async Task ToMassTransitResult(this Task<Result> resultTask, ConsumeContext context)
+        public static async Task Handle<T>(this ISender mediator,
+            ConsumeContext<object> context,
+            Func<object, IRequest<Result<T>>> asMediatorRequest,
+            Func<T, object>? asMessageResult = null,
+            Action<SendContext>? callback = null)
+        {
+            var result = await mediator
+                .Send(asMediatorRequest(context.Message), context.CancellationToken)
+                .RespondWithErrorsIfAny(context);
+
+            if (result == null) return;
+
+            var r = asMessageResult == null ? result : asMessageResult(result);
+
+            if (callback == null)
+                await context.RespondAsync(r);
+            else
+                await context.RespondAsync(r, callback);
+        }
+
+        public static async Task SendAndRespond<T>(this ISender mediator, ConsumeContext<IRequest<Result<T>>> context)
+        {
+            var result = await mediator
+                .SendAndRespondWithErrorsIfAny(context);
+
+            if (result != null)
+            {
+                await context.RespondAsync(result);
+            }
+        }
+
+        public static async Task<T?> SendAndRespondWithErrorsIfAny<T>(this ISender mediator, ConsumeContext<IRequest<Result<T>>> context) =>
+            await mediator
+                .Send(context.Message, context.CancellationToken)
+                .RespondWithErrorsIfAny(context);
+
+        public static async Task<T?> RespondWithErrorsIfAny<T>(this Task<Result<T>> resultTask, ConsumeContext context)
         {
             var result = await resultTask;
-            await result.ToMassTransitResult(context);
+            return await context.RespondWithErrorsIfAny(result);
         }
 
-        public static async Task<T?> ToMassTransitResult<T>(this Task<Result<T>> resultTask, ConsumeContext context) where T : class
+        public static async Task<T?> RespondWithErrorsIfAny<T>(this ConsumeContext context, Result<T> result)
+        {
+            if (result.IsSuccess) return result.Value;
+
+            if (context.ResponseAddress is not null)
+            {
+                await context.RespondAsync(result.GetErrorMessage(context));
+            }
+
+            return default;
+        }
+
+        public static Task SendAndRespond(this ISender mediator, ConsumeContext<IRequest<Result>> context)
+            => mediator.SendAndRespondWithErrorsIfAny(context);
+
+        public static async Task SendAndRespondWithErrorsIfAny(this ISender mediator, ConsumeContext<IRequest<Result>> context) =>
+            await mediator
+                .Send(context.Message, context.CancellationToken)
+                .RespondWithErrorsIfAny(context);
+
+        public static async Task RespondWithErrorsIfAny(this Task<Result> resultTask, ConsumeContext context)
         {
             var result = await resultTask;
-            return await result.ToMassTransitResult(context);
+            await context.RespondWithErrorsIfAny(result);
         }
 
-        public static async Task ToMassTransitResult(this Result result, ConsumeContext context)
+        public static async Task RespondWithErrorsIfAny(this ConsumeContext context, Result result)
         {
-            if (result.IsSuccess)
-                return;
+            if (result.IsSuccess) return;
 
             if (context.ResponseAddress is not null)
-                await context.RespondAsync(result.CreateErrorMessage(context));
+            {
+                await context.RespondAsync(result.GetErrorMessage(context));
+            }
         }
 
-        public static async Task<T?> ToMassTransitResult<T>(this Result<T> result, ConsumeContext context) where T : class
-        {
-            if (result.IsSuccess)
-                return result.Value;
-
-            if (context.ResponseAddress is not null)
-                await context.RespondAsync(result.CreateErrorMessage(context));
-
-            return null;
-        }
-
-        public static ErrorBase? CreateErrorMessage(this ResultBase result, ConsumeContext context)
+        private static ErrorBase GetErrorMessage(this ResultBase result, ConsumeContext context)
         {
             if (result.IsSuccess)
                 throw new InvalidOperationException("Cannot call on successful result.");

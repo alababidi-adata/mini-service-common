@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using VH.MiniService.Common.Application.Abstractions;
@@ -31,7 +32,7 @@ namespace VH.MiniService.Common.Service
         /// <returns></returns>
         public static IServiceCollection AddServiceCore(this IServiceCollection services)
         {
-            services.AddScoped<IUserContext, ImplicitUserContext>();
+            services.AddScoped<IRequestContext, RequestContext>();
 
             return services;
         }
@@ -129,7 +130,8 @@ namespace VH.MiniService.Common.Service
                             rabbit.Password(rmqOptions.Password);
                         });
 
-                        cfg.UseConsumeFilter(typeof(ExtendedConsumeFilter<>), context);
+                        cfg.UseConsumeFilter(typeof(ConsumeRequestContextExtractorFilter<>), context);
+                        cfg.UsePublishFilter(typeof(PublishRequestContextSetterFilter<>), context);
                         cfg.ConfigureEndpoints(context);
                     });
                 });
@@ -145,7 +147,8 @@ namespace VH.MiniService.Common.Service
         /// <param name="configureMvc"></param>
         public static IServiceCollection AddWebApi(this IServiceCollection services, Action<SwaggerGenOptions>? configureSwaggerGen = null, Action<IMvcBuilder>? configureMvc = null)
         {
-            services.TryAddScoped<UserContextMiddleware>();
+            //services.TryAddScoped<RequestContextMiddleware>();
+            DiagnosticListener.AllListeners.Subscribe(new HttpRequestContextInterceptor());
 
             var mvcBuilder = services
                 .AddControllers(o => o.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer())))

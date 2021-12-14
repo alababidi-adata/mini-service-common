@@ -15,7 +15,8 @@ if not exist %local_feed% dotnet nuget add source %local_feed% -n %local_feed%
 if not exist %local_feed% mkdir %local_feed%
 
 :: Pack all projects in the folder
-dotnet pack --output %local_feed% --version-suffix local-%fullstamp%
+dotnet pack --output %local_feed% --version-suffix local-%fullstamp% 
+::--no-restore
 
 ::  dotnet pack --output nupkgs
 :: Find all nuget packages and push to local nuget

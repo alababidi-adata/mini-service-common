@@ -54,11 +54,18 @@ namespace VH.MiniService.Common.Tests
 
         private static async Task<TResponse?> VerifyAndRead<TResponse>(this HttpResponseMessage response, HttpStatusCode? expectedCode = null)
         {
+            // output error if not expected code
+            if (expectedCode != null && expectedCode != response.StatusCode)
+                response.StatusCode.Should().Be(expectedCode, await response.Content.ReadAsStringAsync());
+
+            // output error if not success
             if (expectedCode == null)
                 await response.IsSucceed();
-            else
-                response.StatusCode.Should().Be(expectedCode);
-            return await response.Content.ReadFromJsonAsync<TResponse>();
+
+            // get expected model
+            return response.StatusCode != HttpStatusCode.NoContent
+                ? await response.Content.ReadFromJsonAsync<TResponse>()
+                : default;
         }
 
         public static async Task<HttpResponseMessage> PatchJsonAsync<T>(this HttpClient client, string requestUri, T model)
