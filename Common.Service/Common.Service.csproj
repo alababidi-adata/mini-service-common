@@ -25,7 +25,8 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="[1.0.0-rc7,2)" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="[1.0.0-rc7,2)" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="[6.2.3,8)" />
-    <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="3.1.21" />
+    <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" Version="[3.1.21,4)" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="[5.0.1,6)" />
   </ItemGroup>
 
 

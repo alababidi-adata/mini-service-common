@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using VH.MiniService.Common.Application.Abstractions;
-using VH.MiniService.Common.Service.Controllers;
 using VH.MiniService.Common.Service.MassTransit;
 using VH.MiniService.Common.Service.Options;
 using DotNet.Globbing;
@@ -13,9 +12,9 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using StackExchange.Redis;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace VH.MiniService.Common.Service
@@ -92,6 +91,20 @@ namespace VH.MiniService.Common.Service
                 })
                 );
 
+
+        public static IServiceCollection AddRedisDistributedCache(this IServiceCollection services, IConfiguration configuration)
+        {
+            var options = configuration.GetOptions<RedisOptions>();
+
+            if (!options.Enable) return services;
+
+            return services.AddStackExchangeRedisCache(o =>
+            {
+                o.InstanceName = options.InstanceName;
+                o.Configuration = options.Connection;
+            });
+        }
+
         /// <summary>
         /// Adds MassTransit services.
         /// </summary>
@@ -100,7 +113,7 @@ namespace VH.MiniService.Common.Service
         /// <param name="assemblies">Assemblies to search in for consumers</param>
         public static IServiceCollection AddMassTransitServices(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
         {
-            var options = configuration.GetSection(MassTransitOptions.SectionName).Get<MassTransitOptions>();
+            var options = configuration.GetOptions<MassTransitOptions>();
 
             if (!options.Enable) return services;
 
@@ -173,7 +186,7 @@ namespace VH.MiniService.Common.Service
         {
             const string Ending = "Options";
             var name = typeof(TOptions).Name;
-            var sectionName = name.EndsWith(Ending) ? name[..^Ending.Length] : name;
+            var sectionName = name.EndsWith(Ending) ? name[..^Ending.Length] : throw new ArgumentException($"{name} must have '{Ending}' ending");
             var fullPath = string.IsNullOrWhiteSpace(configPath) ? sectionName : $"{configPath}:{sectionName}";
             return section.GetSection(fullPath).Get<TOptions>();
         }

@@ -3,8 +3,7 @@ namespace VH.MiniService.Common.Service.Options
 {
     public class MassTransitOptions
     {
-        public const string SectionName = "MassTransit";
-        public bool Enable { get; init; } = true;
+        public bool Enable { get; init; }
         public RabbitMqOptions RabbitMq { get; init; }
     }
 }
