@@ -6,7 +6,7 @@
     <WarningsAsErrors>CS8600,CS8602,CS8603,CS8618,CS8625,CS8425,CA1068,CA2016</WarningsAsErrors>
     <IsPackable>true</IsPackable>
     <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>alpha</VersionSuffix>
+    <VersionSuffix></VersionSuffix>
     <PackageId>VH.MiniService.Messaging.Common</PackageId>
     <RootNamespace>VH.MiniService.Messaging.Common</RootNamespace>
     <PackageDescription>Common for messages libraries for services started from MiniService template</PackageDescription>
