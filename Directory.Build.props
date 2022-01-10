@@ -1,12 +1,12 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <!--Messaging.Common has own versioning in the .csproj file-->
     <IsPackable>true</IsPackable>
     <Authors>Vitalii Honcharuk</Authors>
     <Company>Vitalii Honcharuk</Company>
-    <RepositoryUrl>https://github.com/</RepositoryUrl>
+    <RepositoryUrl>https://github.com/vit-h/mini-service-common</RepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
