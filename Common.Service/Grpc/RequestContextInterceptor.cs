@@ -8,6 +8,7 @@
 
 //namespace VH.MiniService.Common.Service.Grpc
 //{
+        // ----------- used HttpRequestContextInterceptor instead ---------------
 //    public class RequestContextInterceptor : Interceptor
 //    {
 //        private readonly IRequestContext _requestContext;

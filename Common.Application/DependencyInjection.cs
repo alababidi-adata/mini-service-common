@@ -25,13 +25,12 @@ namespace VH.MiniService.Common.Application
         /// Adds MediatR pipeline and handlers.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration">Containing <see cref="PerformanceOptions"/> and <see cref="UnhandledExceptionOptions"/></param>
+        /// <param name="configuration">Containing <see cref="PerformanceOptions"/></param>
         /// <param name="assemblies"></param>
         /// <returns></returns>
         public static IServiceCollection AddMediatrPipeline(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
         {
             services.Configure<PerformanceOptions>(configuration.GetSection(PerformanceOptions.SectionName));
-            services.Configure<UnhandledExceptionOptions>(configuration.GetSection(UnhandledExceptionOptions.SectionName));
 
             services.AddMediatR(o => o.AsScoped(), assemblies);
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehavior<,>));
