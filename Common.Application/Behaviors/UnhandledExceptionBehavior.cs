@@ -20,7 +20,7 @@ namespace VH.MiniService.Common.Application.Behaviors
             _logger = logger;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken ct, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
         {
             try
             {

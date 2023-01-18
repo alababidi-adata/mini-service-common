@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>CS8600,CS8602,CS8603,CS8618,CS8625,CS8425,CA1068,CA2016</WarningsAsErrors>
     <IsPackable>true</IsPackable>
@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentResults" Version="[2.6.0,3)" />
+    <PackageReference Include="FluentResults" Version="3.15.1" />
   </ItemGroup>
 
 </Project>

@@ -21,7 +21,7 @@ namespace VH.MiniService.Common.Service
             var headers = httpContext.Request.Headers;
             var token = headers.TryGetValue(CommonRequestHeaders.Token, out var tokenHeader) ? tokenHeader.ToString() : null;
             var tenant = headers.TryGetValue(CommonRequestHeaders.TenantId, out var tenantIdStr)
-                ? int.Parse(tenantIdStr) : (int?)null;
+                ? int.Parse(tenantIdStr!) : (int?)null;
 
             // TODO: get tenantId from header, validate with permitted tenantIds from token.
             // TODO: consider adding HttpRequestContextInterceptorOptions with restrictions on required fields

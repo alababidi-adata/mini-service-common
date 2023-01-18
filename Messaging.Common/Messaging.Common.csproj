@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>CS8600,CS8602,CS8603,CS8618,CS8625,CS8425,CA1068,CA2016</WarningsAsErrors>
     <IsPackable>true</IsPackable>

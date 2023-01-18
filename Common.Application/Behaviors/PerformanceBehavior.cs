@@ -17,7 +17,7 @@ namespace VH.MiniService.Common.Application.Behaviors
     }
 
     public class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : notnull
+        where TRequest : notnull, IRequest<TResponse>
     {
         private readonly IClock _clock;
         private readonly IRequestContext _userContext;
@@ -35,7 +35,7 @@ namespace VH.MiniService.Common.Application.Behaviors
             _logger = logger;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken ct, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
         {
             var requestName = typeof(TRequest).Name;
             using var activity = _activitySource.StartActivity(requestName);

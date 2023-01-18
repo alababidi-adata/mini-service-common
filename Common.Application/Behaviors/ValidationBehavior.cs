@@ -24,7 +24,7 @@ namespace VH.MiniService.Common.Application.Behaviors
             _context = context;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken ct, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
         {
             // ReSharper disable SuspiciousTypeConversion.Global
             if (request is IRequireUser) _ = _context.UserIdOrThrow;

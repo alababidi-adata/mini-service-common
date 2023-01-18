@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GreenPipes;
 using IdentityModel;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -19,9 +18,9 @@ namespace VH.MiniService.Common.Service.MassTransit
         public async Task Send(ConsumeContext<TMessage> context, IPipe<ConsumeContext<TMessage>> next)
         {
             var headers = context.Headers;
-            var token = headers.TryGetHeader(CommonRequestHeaders.Token, out var tokenHeader) ? tokenHeader.ToString() : null;
-            var userId = headers.TryGetHeader(CommonRequestHeaders.UserId, out var idHeader) ? idHeader.ToString() : null;
-            var tenant = headers.TryGetHeader(CommonRequestHeaders.TenantId, out var tenantHeader) ? int.Parse(tenantHeader.ToString()!) : (int?)null;
+            var token = headers.TryGetHeader(CommonRequestHeaders.Token, out var tokenHeader) ? tokenHeader!.ToString() : null;
+            var userId = headers.TryGetHeader(CommonRequestHeaders.UserId, out var idHeader) ? idHeader!.ToString() : null;
+            var tenant = headers.TryGetHeader(CommonRequestHeaders.TenantId, out var tenantHeader) ? int.Parse(tenantHeader!.ToString()!) : (int?)null;
             var claims = userId != null
                 ? new Dictionary<string, string[]>() { { JwtClaimTypes.Subject, new[] { userId } } }
                 : new Dictionary<string, string[]>();

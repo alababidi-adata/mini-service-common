@@ -7,14 +7,12 @@ using VH.MiniService.Common.Service.MassTransit;
 using VH.MiniService.Common.Service.Options;
 using DotNet.Globbing;
 using MassTransit;
-using MassTransit.Definition;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using StackExchange.Redis;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace VH.MiniService.Common.Service
@@ -70,7 +68,7 @@ namespace VH.MiniService.Common.Service
                 })
                 .AddHttpClientInstrumentation(c =>
                 {
-                    c.SetHttpFlavor = true;
+                    //c.SetHttpFlavor = true;
                     c.RecordException = true;
                 })
                 .AddGrpcClientInstrumentation()
@@ -129,7 +127,6 @@ namespace VH.MiniService.Common.Service
             var host = $"{rmqOptions.Host}:{rmqOptions.Port}";
 
             services
-                .AddMassTransitHostedService()
                 .AddMassTransit(o =>
                 {
                     o.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter(true));
@@ -188,7 +185,7 @@ namespace VH.MiniService.Common.Service
             var name = typeof(TOptions).Name;
             var sectionName = name.EndsWith(Ending) ? name[..^Ending.Length] : throw new ArgumentException($"{name} must have '{Ending}' ending");
             var fullPath = string.IsNullOrWhiteSpace(configPath) ? sectionName : $"{configPath}:{sectionName}";
-            return section.GetSection(fullPath).Get<TOptions>();
+            return section.GetSection(fullPath).Get<TOptions>()!;
         }
     }
 
